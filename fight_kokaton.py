@@ -161,7 +161,23 @@ class score:
         self.img = self.font.render("スコア:"+ str(num), 0, (0, 0, 255))
         screen.blit(self.img, [1300, 700])
 
+class Explosion:
+    def __init__(self,bomb):
+        ex_img = pg.image.load("ex03/fig/explosion.gif")
+        self.ex_lst = [
+            ex_img,
+            pg.transform.flip(ex_img, True, False),
+            pg.transform.flip(ex_img, False, True),
+            pg.transform.flip(ex_img, False, False),
+        ]
+        self.rct = ex_img.get_rect()
+        self.rct.centery = bomb.rct.centery
+        self.life = 4
 
+    def update(self, screen):
+        self.life -= 1
+        screen.blit(self.ex_lst[self.life], self.rct)
+        
 
 def main():
     pg.display.set_caption("たたかえ！こうかとん")
@@ -172,6 +188,7 @@ def main():
     beam = None
     y_score = score()
     score_num = 0
+    ex_ins = []
 
     clock = pg.time.Clock()
     tmr = 0
@@ -199,6 +216,8 @@ def main():
                     bombs[i] = None
                     score_num += 1
                     bird.change_img(6, screen)
+                    Ex_eff = Exception()
+                    ex_ins.append(Ex_eff)
                     pg.display.update()
         bombs = [bomb for bomb in bombs if bomb is not None]
 
@@ -210,6 +229,8 @@ def main():
         if beam is not None:
             beam.update(screen)
         y_score.update(score_num, screen)
+        if ex_ins is not None:
+            Ex_eff.update(screen)
         pg.display.update()
         tmr += 1
         clock.tick(50)
